@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>polishcow</title>
+    <style>
+      :root {
+        --scale: 1;
+      }
+
+      body {
+        margin: 0;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(var(--scale));
+        overflow-x: hidden !important;
+      }
+    </style>
+    <script type="module">
+      import { Checkboxland } from 'https://unpkg.com/checkboxland?module';
+
+      const video = document.querySelector('#video');
+
+      document.documentElement.style.setProperty(
+        '--scale',
+        Math.max(innerWidth / (90 * 13), innerHeight / (90 * 13))
+      );
+
+      const cbl = new Checkboxland({
+        dimensions: '90x90',
+        selector: 'body',
+      });
+
+      cbl.renderVideo(video, { threshold: 60 });
+
+      addEventListener('click', () => {
+        video.play();
+        setInterval(() => {
+          if (document.title === 'polishcow') {
+            document.title = 'cowpolish';
+          } else {
+            document.title = 'polishcow';
+          }
+        }, 950);
+      });
+    </script>
+  </head>
+  <body>
+    <video hidden loop id="video" src="./polishcow.mp4"></video>
+  </body>
+</html>
