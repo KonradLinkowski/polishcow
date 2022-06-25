@@ -24,17 +24,56 @@
 
       const video = document.querySelector('#video');
 
-      document.documentElement.style.setProperty(
-        '--scale',
-        Math.max(innerWidth / (90 * 13), innerHeight / (90 * 13))
-      );
+      const getDims = (min) => {
+        const box = 13;
+        const x = innerWidth / box;
+        const y = innerHeight / box;
+        if (x >= min && y >= min) {
+          return {
+            x,
+            y,
+            scale: 1,
+            cow: Math.min(x, y),
+          };
+        }
+
+        if (x > y) {
+          const ratio = x / y;
+          const tx = min * ratio;
+          const ty = min;
+          return {
+            x: tx,
+            y: ty,
+            scale: innerHeight / (ty * box),
+            cow: Math.min(tx, ty),
+          };
+        } else {
+          const ratio = y / x;
+          const tx = min;
+          const ty = min * ratio;
+          return {
+            x: tx,
+            y: ty,
+            scale: innerWidth / (tx * box),
+            cow: Math.min(tx, ty),
+          };
+        }
+      };
+
+      const { x, y, scale, cow } = getDims(60);
+
+      document.documentElement.style.setProperty('--scale', scale);
 
       const cbl = new Checkboxland({
-        dimensions: '90x90',
+        dimensions: `${x}x${y}`,
         selector: 'body',
       });
 
-      cbl.renderVideo(video, { threshold: 60 });
+      cbl.renderVideo(video, {
+        threshold: 60,
+        x: Math.floor(x / 2 - cow / 2),
+        y: Math.floor(y / 2 - cow / 2),
+      });
 
       addEventListener('click', () => {
         video.play();
