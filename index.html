@@ -23,6 +23,8 @@
       import { Checkboxland } from 'https://unpkg.com/checkboxland?module';
 
       const video = document.querySelector('#video');
+      let cbl = null;
+      let dbnc = undefined;
 
       const getDims = (min) => {
         const box = 13;
@@ -60,19 +62,35 @@
         }
       };
 
-      const { x, y, scale, cow } = getDims(60);
+      const setup = () => {
+        const { x, y, scale, cow } = getDims(60);
 
-      document.documentElement.style.setProperty('--scale', scale);
+        document.documentElement.style.setProperty('--scale', scale);
 
-      const cbl = new Checkboxland({
-        dimensions: `${x}x${y}`,
-        selector: 'body',
-      });
+        if (cbl) {
+          cbl.renderVideo.cleanUp();
+        }
 
-      cbl.renderVideo(video, {
-        threshold: 60,
-        x: Math.floor(x / 2 - cow / 2),
-        y: Math.floor(y / 2 - cow / 2),
+        cbl = new Checkboxland({
+          dimensions: `${Math.floor(x)}x${Math.floor(y)}`,
+          selector: 'body',
+        });
+
+        cbl.renderVideo(video, {
+          threshold: 60,
+          x: Math.floor(x / 2 - cow / 2),
+          y: Math.floor(y / 2 - cow / 2),
+        });
+      };
+
+      setup();
+      addEventListener('resize', () => {
+        if (dbnc) {
+          clearTimeout(dbnc);
+        }
+        dbnc = setTimeout(() => {
+          setup();
+        }, 100);
       });
 
       addEventListener('click', () => {
